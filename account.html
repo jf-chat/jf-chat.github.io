@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account - jf-chat</title>
-    <link rel="stylesheet" href="account.css">
+    <title>Account Creation</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="account-container">
-        <header>
-            <h1>Your Account</h1>
-        </header>
-        <main>
-            <form id="account-form">
-                <div>
-                    <label for="profile-picture">Profile Picture (Optional):</label>
-                    <input type="file" id="profile-picture" name="profile-picture">
-                </div>
-                <div>
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="@user">
-                </div>
-                <div>
-                    <label for="display-name">Display Name:</label>
-                    <input type="text" id="display-name" name="display-name">
-                </div>
-                <div>
-                    <label for="birthday">Birthday:</label>
-                    <input type="date" id="birthday" name="birthday">
-                </div>
-                <button type="submit" id="save-changes">Save Changes</button>
-            </form>
-        </main>
+    <div class="center-text">
+        <h1>Create Your Account</h1>
+        <div class="input-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username">
+        </div>
+        <div class="input-group">
+            <label for="displayName">Display Name:</label>
+            <input type="text" id="displayName" placeholder="Enter your display name">
+        </div>
+        <div class="input-group">
+            <label for="birthday">Birthday:</label>
+            <input type="date" id="birthday">
+        </div>
+        <div class="input-group">
+            <label for="profilePic">Profile Picture:</label>
+            <input type="file" id="profilePic">
+            <img id="profilePicPreview" src="" alt="Profile Preview">
+        </div>
+        <button onclick="createAccount()">Create Account</button>
     </div>
 
-    <script type="module" src="accountScript.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
