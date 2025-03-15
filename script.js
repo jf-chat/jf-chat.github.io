@@ -1,8 +1,9 @@
-// Import Firebase setup
+// Import necessary Firebase setup
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getDatabase, ref, get } from "firebase/database";
 import { initializeApp } from "firebase/app";
 
+// Firebase configuration and initialization
 const firebaseConfig = {
   apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
   authDomain: "jf-chat-1ac2e.firebaseapp.com",
@@ -13,10 +14,9 @@ const firebaseConfig = {
   measurementId: "G-2GPYBGZYQ7"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth();
+const db = getDatabase();
 
 // Google login
 const googleLoginBtn = document.getElementById('google-login-btn');
@@ -25,8 +25,21 @@ googleLoginBtn.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
         .then((result) => {
-            // Redirect to home page after successful login
-            window.location.href = 'home.html';
+            const user = result.user;
+            
+            // Check if the user has already created an account
+            const userRef = ref(db, 'users/' + user.uid);
+            get(userRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    // User doesn't have an account, redirect to account creation page
+                    window.location.href = 'account.html';
+                } else {
+                    // User has an account, go to the home page
+                    window.location.href = 'home.html';
+                }
+            }).catch((error) => {
+                console.error("Error checking account:", error);
+            });
         })
         .catch((error) => {
             console.error("Error during sign-in:", error);
