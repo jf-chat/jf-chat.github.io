@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, set, push } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,19 +18,27 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
-// Initialize Firebase Auth
 const auth = getAuth();
-const provider = new GoogleAuthProvider();
+const db = getDatabase(app);
+
+// Firebase Authentication state change to handle the login flow
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log('User logged in:', user);
+    localStorage.setItem('userId', user.uid); // Store user ID after login
+  } else {
+    window.location.href = 'index.html'; // Redirect to login page if not logged in
+  }
+});
 
 // Login Function
 function loginWithGoogle() {
+  const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      // Store user info in localStorage or Firebase
       localStorage.setItem('userId', user.uid);
-      window.location.href = 'account.html'; // Redirect to account creation
+      window.location.href = 'account.html'; // Redirect to account creation page
     })
     .catch((error) => {
       console.error("Error during login: ", error.message);
@@ -53,7 +61,6 @@ function createAccount() {
     profilePic: profilePic ? URL.createObjectURL(profilePic) : null,
   };
 
-  const db = getDatabase();
   set(ref(db, 'users/' + userId), userData)
     .then(() => {
       window.location.href = 'home.html'; // Redirect to home page
@@ -78,43 +85,61 @@ function addFriend() {
   const friendUserId = document.getElementById('friendUserId').value;
   const userId = localStorage.getItem('userId');
   
-  const db = getDatabase();
-  set(ref(db, 'friendRequests/' + userId + '/' + friendUserId), {
-    status: 'pending',
-  })
-  .then(() => {
-    alert('Friend request sent!');
-  })
-  .catch((error) => {
-    console.error("Error sending friend request: ", error.message);
+  set(ref(db, 'friendRequests/' + userId + '/' + friendUserId), { status: 'pending' })
+    .then(() => {
+      alert('Friend request sent!');
+    })
+    .catch((error) => {
+      console.error("Error sending friend request: ", error.message);
+    });
+}
+
+// Notifications logic
+const notificationsBtn = document.getElementById('notifications-btn');
+const notificationsDropdown = document.getElementById('notifications-dropdown');
+const notificationsList = document.getElementById('notifications-list');
+
+// Toggle notifications dropdown visibility
+notificationsBtn.addEventListener('click', () => {
+  notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+// Function to add notification to the dropdown
+function addNotification(notificationText, notificationId) {
+  const notificationItem = document.createElement('li');
+  notificationItem.classList.add('notification-item');
+  notificationItem.innerHTML = `
+    ${notificationText}
+    <div class="notification-buttons">
+      <button class="accept" onclick="respondToRequest('${notificationId}', true)">Accept</button>
+      <button class="decline" onclick="respondToRequest('${notificationId}', false)">Decline</button>
+    </div>
+  `;
+  notificationsList.appendChild(notificationItem);
+}
+
+// Function to send notifications to the user (for simplicity, you can store these in the database)
+function sendNotification(toUserId, fromUserName) {
+  const notificationId = push(ref(db, 'notifications/' + toUserId)).key;
+  set(ref(db, 'notifications/' + toUserId + '/' + notificationId), {
+    text: `${fromUserName} sent you a friend request.`,
+    status: 'pending'
   });
 }
 
-// Log Out Function
-function logout() {
-  localStorage.removeItem('userId');
-  window.location.href = 'index.html'; // Redirect to login page
+// Function to handle accepting or declining friend requests
+function respondToRequest(notificationId, accepted) {
+  const userId = localStorage.getItem('userId'); // Get current user ID
+
+  // Update the notification status in the database
+  const status = accepted ? 'accepted' : 'declined';
+  set(ref(db, 'notifications/' + userId + '/' + notificationId), { status: status });
+
+  // Show the result in the dropdown
+  addNotification(`${status === 'accepted' ? 'You accepted' : 'You declined'} the friend request.`, notificationId);
 }
 
-// Home Page Logic (Fetching Friends)
-function fetchFriends() {
-  const userId = localStorage.getItem('userId');
-  const db = getDatabase();
-  
-  const friendsRef = ref(db, 'users/' + userId + '/friends');
-  friendsRef.once('value')
-    .then((snapshot) => {
-      const friends = snapshot.val();
-      if (friends) {
-        const friendsList = Object.keys(friends).map(friendId => {
-          return `<li>${friends[friendId].username}</li>`;
-        }).join('');
-        document.getElementById('friendsList').innerHTML = `<ul>${friendsList}</ul>`;
-      } else {
-        document.getElementById('friendsList').innerHTML = 'No friends yet. Click "Add Friend" to start.';
-      }
-    })
-    .catch((error) => {
-      console.error("Error fetching friends: ", error.message);
-    });
+// Simulate a friend request (you would call this when sending a real request)
+function simulateFriendRequest(fromUserName, toUserId) {
+  sendNotification(toUserId, fromUserName);
 }
