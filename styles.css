@@ -1,3 +1,4 @@
+/* General Styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #121212;
@@ -35,6 +36,7 @@ button:hover {
   background-color: #3700b3;
 }
 
+/* Sidebar Styles */
 .sidebar {
   position: fixed;
   left: 0;
@@ -64,6 +66,7 @@ button:hover {
   background-color: #018786;
 }
 
+/* Notifications Styles */
 .notifications-container {
   position: absolute;
   top: 10px;
@@ -136,4 +139,21 @@ button:hover {
 
 .notification-buttons button:hover {
   opacity: 0.8;
+}
+
+/* Specific Styles for Home Page */
+#friends-list li {
+  color: white;
+}
+
+#add-friend-btn {
+  background-color: #03dac5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#add-friend-btn:hover {
+  background-color: #018786;
 }
