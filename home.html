@@ -7,29 +7,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <!-- Your sidebar content here -->
-        <div id="friend-list">
-            <!-- Friends will be listed here -->
+    <div class="navbar">
+        <div class="sidebar">
+            <h2>Select a friend</h2>
+            <div id="friends-list">
+                <!-- Friends list goes here -->
+            </div>
+            <button id="add-friend-btn">Add Friend</button>
         </div>
-        <button id="add-friend-btn">Add Friend</button>
-    </div>
 
-    <!-- Main content -->
-    <div id="main-content">
-        <div id="notifications-btn">
-            <button id="notifications-toggle">🔔 Notifications</button>
-            <div id="notifications-dropdown" class="hidden">
-                <ul id="notifications-list"></ul>
+        <!-- Notifications Button -->
+        <div class="notifications-container">
+            <button id="notifications-btn">Notifications</button>
+            <div id="notifications-dropdown" class="dropdown">
+                <ul id="notifications-list">
+                    <!-- Notifications will appear here -->
+                </ul>
             </div>
         </div>
-        
-        <h2 class="centered-text">Select a friend</h2>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
