@@ -3,15 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-// Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
-    authDomain: "jf-chat-1ac2e.firebaseapp.com",
-    projectId: "jf-chat-1ac2e",
-    storageBucket: "jf-chat-1ac2e.firebasestorage.app",
-    messagingSenderId: "81241551133",
-    appId: "1:81241551133:web:1c6e4ff5afe09d38b0f1f4",
-    measurementId: "G-2GPYBGZYQ7"
+  apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
+  authDomain: "jf-chat-1ac2e.firebaseapp.com",
+  projectId: "jf-chat-1ac2e",
+  storageBucket: "jf-chat-1ac2e.firebasestorage.app",
+  messagingSenderId: "81241551133",
+  appId: "1:81241551133:web:1c6e4ff5afe09d38b0f1f4",
+  measurementId: "G-2GPYBGZYQ7"
 };
 
 // Initialize Firebase
