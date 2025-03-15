@@ -1,9 +1,10 @@
-// Firebase initialization
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, child } from "firebase/database";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, set, get, child } from "firebase/database";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
   authDomain: "jf-chat-1ac2e.firebaseapp.com",
@@ -14,73 +15,81 @@ const firebaseConfig = {
   measurementId: "G-2GPYBGZYQ7"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
 const analytics = getAnalytics(app);
 
-// Google Login
-document.getElementById("google-login-btn").addEventListener("click", function() {
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const userId = result.user.uid;
-      localStorage.setItem("userId", userId);
-      window.location.href = "account.html";
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-});
+// Firebase Authentication
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
-// Account creation
-document.getElementById("create-account-btn").addEventListener("click", function() {
-  const userId = localStorage.getItem("userId");
-  const username = document.getElementById("username").value;
-  const displayName = document.getElementById("display-name").value;
-  const profilePic = document.getElementById("profile-pic").files[0];
-
-  // Check if username already exists
-  const usernameRef = ref(db, 'users/');
-  get(usernameRef).then(snapshot => {
-    const existingUsernames = snapshot.val();
-    const usernameTaken = Object.values(existingUsernames).some(user => user.username === username);
-    if (usernameTaken) {
-      document.getElementById("username-error").textContent = "Username is already taken!";
-      return;
-    }
-
-    // Store the user data
-    const newUserRef = ref(db, 'users/' + userId);
-    set(newUserRef, {
-      username: username,
-      displayName: displayName,
-      profilePic: profilePic ? profilePic.name : null,
-    }).then(() => {
-      window.location.href = "home.html";
-    });
-  });
-});
-
-// Home page logic to display friend requests
-const userId = localStorage.getItem("userId");
-const friendRequestsRef = ref(db, 'users/' + userId + '/friendRequests/');
-get(friendRequestsRef).then(snapshot => {
-  const requests = snapshot.val();
-  const requestList = document.getElementById("friend-requests-list");
-  if (requests) {
-    for (const [friendId, status] of Object.entries(requests)) {
-      const listItem = document.createElement("li");
-      listItem.textContent = `Friend request from ${friendId}`;
-      requestList.appendChild(listItem);
-    }
-  } else {
-    requestList.textContent = "No friend requests.";
+// Handle login with Google
+document.getElementById('login-btn').addEventListener('click', async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log(user);
+    checkUserExistence(user);
+  } catch (error) {
+    console.error(error);
   }
 });
 
+// Check if user exists, and redirect to account page if not
+const checkUserExistence = async (user) => {
+  const db = getDatabase();
+  const userRef = ref(db, 'users/' + user.uid);
+  const snapshot = await get(userRef);
 
-// Simulate a friend request (you would call this when sending a real request)
-function simulateFriendRequest(fromUserName, toUserId) {
-  sendNotification(toUserId, fromUserName);
-}
+  if (snapshot.exists()) {
+    window.location.href = "home.html";
+  } else {
+    window.location.href = "account.html";
+  }
+};
+
+// Account creation process
+document.getElementById('account-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('username').value;
+  const profilePic = document.getElementById('profilePic').files[0];
+  const user = auth.currentUser;
+
+  if (user) {
+    const db = getDatabase();
+    const newUserRef = ref(db, 'users/' + user.uid);
+
+    // Check if username exists
+    const snapshot = await get(child(ref(db), 'users'));
+    const users = snapshot.val();
+    if (Object.values(users).some(u => u.username === username)) {
+      alert('Username already taken');
+      return;
+    }
+
+    // Set the user data
+    const userData = {
+      username: username,
+      displayName: user.displayName,
+      profilePic: profilePic ? await uploadProfilePic(profilePic) : '',
+      friends: {},
+      friendRequests: {},
+      notifications: {}
+    };
+
+    await set(newUserRef, userData);
+    window.location.href = "home.html";
+  }
+});
+
+// Upload profile picture
+const uploadProfilePic = async (file) => {
+  const storageRef = ref(getStorage(), 'profile_pics/' + file.name);
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
+  return url;
+};
+
+// Firebase Realtime Database Functions for Friends/Notifications
+// Add friend request, accept friend request, etc. will be added here as needed
