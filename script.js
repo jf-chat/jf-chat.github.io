@@ -1,10 +1,9 @@
-// Import the functions you need from the SDKs you need
+// Firebase initialization
 import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, get, child } from "firebase/database";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { getDatabase, ref, set, push } from "firebase/database";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
   authDomain: "jf-chat-1ac2e.firebaseapp.com",
@@ -15,129 +14,71 @@ const firebaseConfig = {
   measurementId: "G-2GPYBGZYQ7"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth();
 const db = getDatabase(app);
+const auth = getAuth(app);
+const analytics = getAnalytics(app);
 
-// Firebase Authentication state change to handle the login flow
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log('User logged in:', user);
-    localStorage.setItem('userId', user.uid); // Store user ID after login
-  } else {
-    window.location.href = 'index.html'; // Redirect to login page if not logged in
-  }
-});
-
-// Login Function
-function loginWithGoogle() {
+// Google Login
+document.getElementById("google-login-btn").addEventListener("click", function() {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
     .then((result) => {
-      const user = result.user;
-      localStorage.setItem('userId', user.uid);
-      window.location.href = 'account.html'; // Redirect to account creation page
+      const userId = result.user.uid;
+      localStorage.setItem("userId", userId);
+      window.location.href = "account.html";
     })
     .catch((error) => {
-      console.error("Error during login: ", error.message);
+      console.error(error);
     });
-}
-
-// Account Creation
-function createAccount() {
-  const userId = generateRandomUserId();
-  const username = document.getElementById('username').value || '@user';
-  const displayName = document.getElementById('displayName').value;
-  const birthday = document.getElementById('birthday').value;
-  const profilePic = document.getElementById('profilePic').files[0] || null;
-  
-  const userData = {
-    userId,
-    username,
-    displayName,
-    birthday,
-    profilePic: profilePic ? URL.createObjectURL(profilePic) : null,
-  };
-
-  set(ref(db, 'users/' + userId), userData)
-    .then(() => {
-      window.location.href = 'home.html'; // Redirect to home page
-    })
-    .catch((error) => {
-      console.error("Error creating account: ", error.message);
-    });
-}
-
-// Generate Random User ID (8 characters)
-function generateRandomUserId() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let userId = '';
-  for (let i = 0; i < 8; i++) {
-    userId += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return userId;
-}
-
-// Add Friend Function
-function addFriend() {
-  const friendUserId = document.getElementById('friendUserId').value;
-  const userId = localStorage.getItem('userId');
-  
-  set(ref(db, 'friendRequests/' + userId + '/' + friendUserId), { status: 'pending' })
-    .then(() => {
-      alert('Friend request sent!');
-    })
-    .catch((error) => {
-      console.error("Error sending friend request: ", error.message);
-    });
-}
-
-// Notifications logic
-const notificationsBtn = document.getElementById('notifications-btn');
-const notificationsDropdown = document.getElementById('notifications-dropdown');
-const notificationsList = document.getElementById('notifications-list');
-
-// Toggle notifications dropdown visibility
-notificationsBtn.addEventListener('click', () => {
-  notificationsDropdown.style.display = notificationsDropdown.style.display === 'block' ? 'none' : 'block';
 });
 
-// Function to add notification to the dropdown
-function addNotification(notificationText, notificationId) {
-  const notificationItem = document.createElement('li');
-  notificationItem.classList.add('notification-item');
-  notificationItem.innerHTML = `
-    ${notificationText}
-    <div class="notification-buttons">
-      <button class="accept" onclick="respondToRequest('${notificationId}', true)">Accept</button>
-      <button class="decline" onclick="respondToRequest('${notificationId}', false)">Decline</button>
-    </div>
-  `;
-  notificationsList.appendChild(notificationItem);
-}
+// Account creation
+document.getElementById("create-account-btn").addEventListener("click", function() {
+  const userId = localStorage.getItem("userId");
+  const username = document.getElementById("username").value;
+  const displayName = document.getElementById("display-name").value;
+  const profilePic = document.getElementById("profile-pic").files[0];
 
-// Function to send notifications to the user (for simplicity, you can store these in the database)
-function sendNotification(toUserId, fromUserName) {
-  const notificationId = push(ref(db, 'notifications/' + toUserId)).key;
-  set(ref(db, 'notifications/' + toUserId + '/' + notificationId), {
-    text: `${fromUserName} sent you a friend request.`,
-    status: 'pending'
+  // Check if username already exists
+  const usernameRef = ref(db, 'users/');
+  get(usernameRef).then(snapshot => {
+    const existingUsernames = snapshot.val();
+    const usernameTaken = Object.values(existingUsernames).some(user => user.username === username);
+    if (usernameTaken) {
+      document.getElementById("username-error").textContent = "Username is already taken!";
+      return;
+    }
+
+    // Store the user data
+    const newUserRef = ref(db, 'users/' + userId);
+    set(newUserRef, {
+      username: username,
+      displayName: displayName,
+      profilePic: profilePic ? profilePic.name : null,
+    }).then(() => {
+      window.location.href = "home.html";
+    });
   });
-}
+});
 
-// Function to handle accepting or declining friend requests
-function respondToRequest(notificationId, accepted) {
-  const userId = localStorage.getItem('userId'); // Get current user ID
+// Home page logic to display friend requests
+const userId = localStorage.getItem("userId");
+const friendRequestsRef = ref(db, 'users/' + userId + '/friendRequests/');
+get(friendRequestsRef).then(snapshot => {
+  const requests = snapshot.val();
+  const requestList = document.getElementById("friend-requests-list");
+  if (requests) {
+    for (const [friendId, status] of Object.entries(requests)) {
+      const listItem = document.createElement("li");
+      listItem.textContent = `Friend request from ${friendId}`;
+      requestList.appendChild(listItem);
+    }
+  } else {
+    requestList.textContent = "No friend requests.";
+  }
+});
 
-  // Update the notification status in the database
-  const status = accepted ? 'accepted' : 'declined';
-  set(ref(db, 'notifications/' + userId + '/' + notificationId), { status: status });
-
-  // Show the result in the dropdown
-  addNotification(`${status === 'accepted' ? 'You accepted' : 'You declined'} the friend request.`, notificationId);
-}
 
 // Simulate a friend request (you would call this when sending a real request)
 function simulateFriendRequest(fromUserName, toUserId) {
