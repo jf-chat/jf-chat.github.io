@@ -8,21 +8,17 @@
 </head>
 <body>
   <div class="sidebar">
-    <ul>
-      <li>Welcome, <span id="display-name"></span></li>
-      <li><button id="view-friend-requests">View Friend Requests</button></li>
-      <li><button id="add-friend">Add Friend</button></li>
-    </ul>
+    <h3>Your Friends</h3>
+    <ul id="friends-list"></ul>
+    <button class="add-friend" id="add-friend-btn">Add Friend</button>
   </div>
-  
-  <div class="content">
-    <h2>Friend Requests</h2>
-    <ul id="friend-requests-list"></ul>
+  <div class="notifications-container">
+    <button id="notifications-btn">Notifications</button>
+    <div class="dropdown" id="notifications-dropdown">
+      <ul id="notifications-list"></ul>
+    </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
