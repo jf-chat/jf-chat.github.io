@@ -3,32 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account Creation</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Create Account</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <div class="center-text">
     <h1>Create Your Account</h1>
-    <div class="input-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" required>
-      <span id="username-error" class="error"></span>
-    </div>
-    <div class="input-group">
-      <label for="display-name">Display Name</label>
-      <input type="text" id="display-name" required>
-    </div>
-    <div class="input-group">
-      <label for="profile-pic">Profile Picture (optional)</label>
-      <input type="file" id="profile-pic">
-      <div id="profilePicPreview"></div>
-    </div>
-    <button id="create-account-btn">Create Account</button>
+    <form id="account-form">
+      <div class="input-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="input-group">
+        <label for="profilePic">Profile Picture:</label>
+        <input type="file" id="profilePic" name="profilePic">
+      </div>
+      <button type="submit" id="create-account-btn">Create Account</button>
+    </form>
   </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
