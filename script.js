@@ -1,9 +1,8 @@
-// Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+// Import Firebase setup
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from "firebase/app";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyC8ust9ZkX9zqXPNjy9g4-7QmmQDasxewc",
   authDomain: "jf-chat-1ac2e.firebaseapp.com",
@@ -18,28 +17,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
-const provider = new GoogleAuthProvider();
 
-// Check if user is logged in
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // Redirect to home page if logged in
-        window.location.href = "home.html";
-    }
-});
+// Google login
+const googleLoginBtn = document.getElementById('google-login-btn');
 
-// Login with Google
-document.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = document.getElementById("login-btn");
-    if (loginBtn) {
-        loginBtn.addEventListener("click", () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("User signed in:", result.user);
-                })
-                .catch((error) => {
-                    console.error("Error during login:", error);
-                });
+googleLoginBtn.addEventListener('click', () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            // Redirect to home page after successful login
+            window.location.href = 'home.html';
+        })
+        .catch((error) => {
+            console.error("Error during sign-in:", error);
         });
-    }
 });
