@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - jf-chat</title>
+    <link rel="stylesheet" href="account.css">
+</head>
+<body>
+    <div class="account-container">
+        <header>
+            <h1>Your Account</h1>
+        </header>
+        <main>
+            <form id="account-form">
+                <div>
+                    <label for="profile-picture">Profile Picture (Optional):</label>
+                    <input type="file" id="profile-picture" name="profile-picture">
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="@user">
+                </div>
+                <div>
+                    <label for="display-name">Display Name:</label>
+                    <input type="text" id="display-name" name="display-name">
+                </div>
+                <div>
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" name="birthday">
+                </div>
+                <button type="submit" id="save-changes">Save Changes</button>
+            </form>
+        </main>
+    </div>
+
+    <script type="module" src="accountScript.js"></script>
+</body>
+</html>
