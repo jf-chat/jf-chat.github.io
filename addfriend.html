@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Friend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="center-text">
+        <h1>Add a Friend</h1>
+        <div class="input-group">
+            <label for="friendUserId">Enter Friend's User ID:</label>
+            <input type="text" id="friendUserId" placeholder="Enter user ID">
+        </div>
+        <button onclick="addFriend()">Send Friend Request</button>
+        <button onclick="location.href='home.html'">Back to Home</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
