@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JF Chat</title>
-    <link rel="stylesheet" href="home.css">
-    <script type="module" src="homeScript.js"></script>
+    <title>Home</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="sidebar">
-        <button id="addFriendBtn">Add a Friend</button>
-        <h2>Friends</h2>
-        <ul id="friends-list">
-            <!-- Friends will be dynamically added here -->
-        </ul>
-    </div>
-    <div class="content">
-        <h1>Select a Friend</h1>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <!-- Your sidebar content here -->
+        <div id="friend-list">
+            <!-- Friends will be listed here -->
+        </div>
+        <button id="add-friend-btn">Add Friend</button>
     </div>
 
-    <script  type="module" src="homeScript.js">
-        document.getElementById("addFriendBtn").addEventListener("click", function() {
-            window.location.href = "addFriend.html";
-        });
-    </script>
+    <!-- Main content -->
+    <div id="main-content">
+        <div id="notifications-btn">
+            <button id="notifications-toggle">🔔 Notifications</button>
+            <div id="notifications-dropdown" class="hidden">
+                <ul id="notifications-list"></ul>
+            </div>
+        </div>
+        
+        <h2 class="centered-text">Select a friend</h2>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
