@@ -89,3 +89,79 @@ label {
   border-radius: 50%;
   margin-top: 10px;
 }
+
+/* Notifications Button */
+.notifications-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+#notifications-btn {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#notifications-btn:hover {
+    background-color: #555;
+}
+
+/* Dropdown Styles */
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#notifications-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f1f1f1;
+}
+
+.notification-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.notification-buttons button {
+    padding: 5px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.notification-buttons button.decline {
+    background-color: #dc3545;
+}
+
+.notification-buttons button:hover {
+    opacity: 0.8;
+}
