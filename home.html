@@ -1,37 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="home.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Welcome to JF Gamehub</h2>
-        <ul id="friendsList">
-            <!-- Friends list will be populated here -->
-        </ul>
-        <button class="add-friend" onclick="location.href='addfriend.html'">Add Friend</button>
-    </div>
+  <div class="sidebar">
+    <ul>
+      <li>Welcome, <span id="display-name"></span></li>
+      <li><button id="view-friend-requests">View Friend Requests</button></li>
+      <li><button id="add-friend">Add Friend</button></li>
+    </ul>
+  </div>
+  
+  <div class="content">
+    <h2>Friend Requests</h2>
+    <ul id="friend-requests-list"></ul>
+  </div>
 
-    <div class="notifications-container">
-        <button id="notifications-btn">Notifications</button>
-        <div id="notifications-dropdown" class="dropdown">
-            <ul id="notifications-list">
-                <!-- Notifications will appear here -->
-            </ul>
-        </div>
-    </div>
-
-    <div class="center-text">
-        <h1>Welcome to Your Home Page</h1>
-        <button onclick="logout()">Log Out</button>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-    <script src="script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
